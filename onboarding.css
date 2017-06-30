@@ -1,0 +1,92 @@
+h1, h2,h3, h4, h5, h6, p, a, label, button {
+	font-family: 'Lato', Helvetica Neue, Helvetica, Roboto, Arial, sans-serif;;
+	color:white;
+}
+
+h1 {
+	font-size: 3.5em;
+}
+
+h1, h4, label {
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+body {
+	text-align:center;
+	background-color: #6CAEFF;
+	margin-top: 5%;
+
+}
+button {
+	color: white;
+	background-color: #18399a;
+	height: 35px;
+	width: 120px;
+	text-align: center;
+	vertical-align: center;
+	border-color: white;
+	padding: 0px;
+	margin-bottom: 15px;
+}
+
+button:hover {
+	background: #6585e7;
+}
+
+ul {
+	list-style: none;
+}
+
+ul li {
+    background-color: white;
+    position: relative;
+    padding: 20px 20px 20px 20px;
+    margin: 0 0 3px 0;
+    text-align: center;
+    font-size: 18px;
+    transition: 0.2s;
+    border:1px solid #D8D8D8;
+    color: #888888;
+    box-shadow: 3px 3px 3px #888888;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor:pointer;
+}
+
+li:hover {
+	background: #e6f2ff;
+}
+
+.labels {
+	display: block !important;
+    vertical-align: center;
+    float: center;
+    padding-bottom: 2%;
+}
+
+#sign-in {
+	margin-top: 5%;
+	margin-left: 30%;
+	margin-right:30%;
+}
+
+#task-fields {
+	margin-top: 10%;
+	margin-left: 25%;
+	margin-right:25%;
+}
+
+#task-list {
+	margin-top: 10%;
+}
+
+.close {
+	float: left;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	text-align: left;
+}

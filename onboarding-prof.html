@@ -1,0 +1,185 @@
+<html>
+  <head>
+	<title>Skygear To-Do List</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+	<script type="text/javascript" src="js/onboarding.js"></script>
+	<link rel="stylesheet" href="css/foundation.css" />
+	<link rel="stylesheet" type="text/css" href="css/onboarding.css">
+	<link rel="shortcut icon" type="image/png" href="css/img/favicon.ico"/>
+		<!-- Credit: <a href="https://icons8.com">Icon pack by Icons8</a> -->
+
+	<meta property="og:title" content="Skygear | To-Do List" />
+	<meta property="og:site_name" content="Skygear To-Do List"/>
+	<meta property="og:image" content="css/img/icon-todo.png" />
+  </head>
+  <body onload = "getRecords()">	
+  	<header>
+		<!--Skygear CDN-->
+		<script src="https://code.skygear.io/js/polyfill/latest/polyfill.min.js"></script>
+		<script src="https://code.skygear.io/js/skygear/latest/skygear.min.js"></script>
+
+		<!--Skygear configuration-->
+		<!--The app end point and the api key can be found in the developer portal-->
+		<script>
+		  skygear.config({
+		    'endPoint': 'https://onboarding.skygeario.com/', // trailing slash is required
+		    'apiKey': '7db0c25041ab4154b82233f3e308b2ba',
+		  }).then(() => {
+		    console.log('skygear container is now ready for making API calls.');
+		  }, (error) => {
+		    console.error(error);
+		  });
+		</script>
+	</header>
+
+
+	<div class = "row">
+		<div class="large-12 large-centered columns">
+			<h1>
+				<!-- Credit: <a href="https://icons8.com">Icon pack by Icons8</a> -->
+				<img id = "todo-icon" src="css/img/icon-todo-100.png">  
+				Skygear To-Do List 
+			</h1>	
+		</div>
+	</div>
+	<div>
+		<a href = "onboarding.html">
+			<button onclick = "logout()" id = "log-out">Log out</button>
+		</a>
+	</div>	
+
+	<div id = "task-fields">
+		<div id = "tasks">
+			<input type = "text" id = "task-input" placeholder="Enter task here..." maxlength="140">
+			<button onclick = "newElement()" id = "add-task"> Add New Task</button>
+		</div>
+		<ul id = "task-list"> 
+			<h4> Your Current To-Do List </h4>
+		</ul>
+	</div>
+
+	<script type="text/javascript"> 
+		const LIMIT = 9999;
+		const ToDos = skygear.Record.extend('ToDos')
+
+	  	function newElement() {
+		  var li = document.createElement("li");
+		  var inputValue = document.getElementById("task-input").value;
+		  var t = document.createTextNode(inputValue);
+		  li.appendChild(t);
+		  if (inputValue === '') {
+		    alert("Please enter a task first!");
+		  } else {
+		    document.getElementById("task-list").appendChild(li);
+		  }
+		  document.getElementById("task-input").value = "";
+		  addRecord(inputValue);
+		  var recID = getRecordByContent(inputValue);
+		  var span = document.createElement("SPAN");
+		  var txt = document.createTextNode("\u00D7");
+		  span.appendChild(txt);
+		  span.className = "close";
+		  span.id = recID;
+		  li.appendChild(span);
+		  deleteTask();
+		}
+
+		function deleteTask() {
+			var close = document.getElementsByClassName("close");
+		  	var i;
+		  	for (i = 0; i < close.length; i++) {
+		    	close[i].onclick = function() {
+		      	var div = this.parentElement;
+		      	div.style.display = "none";
+		      	deleteRecord(this.id);
+		    	}
+		  	}
+		}
+		function addRecord(content) {
+		  // var ToDos = skygear.Record.extend('ToDos');
+		  skygear.privateDB.save(new ToDos({
+		  	"content" : content
+		  })).then((record) => {
+		    console.log(record);
+		  }, (error) => {
+		    console.error(error);
+		  });
+		}
+
+		function loadRecords(records) {
+		  for (var i=0; i<records.length; i++) {
+			var li = document.createElement("li");
+			var inputValue = records[i].content;
+			var t = document.createTextNode(inputValue);
+			li.appendChild(t);
+			document.getElementById("task-list").appendChild(li);
+			var span = document.createElement("SPAN");
+		  	var txt = document.createTextNode("\u00D7");
+		  	li.appendChild(span);
+		  }
+
+		  	var myNodelist = document.getElementsByTagName("LI");
+			var i;
+			for (i = 0; i < myNodelist.length; i++) {
+			  var span = document.createElement("SPAN");
+			  var txt = document.createTextNode("\u00D7");
+			  span.className = "close";
+			  span.id = records[i]._id;
+			  span.appendChild(txt);
+			  myNodelist[i].appendChild(span);
+			}
+			deleteTask();
+		}
+
+		function getRecordByContent(content) {
+			const query = new skygear.Query(ToDos);
+			query.equalTo("content", content);
+			query.limit = 1;
+			skygear.privateDB.query(query).then((records) => {
+			  console.log("current record " + records[0]);
+			  const rec = records[0];
+		      return rec._id;
+		    }, (error) => {
+			  console.error(error);
+			})
+		}
+
+		function getRecords() {
+			const query = new skygear.Query(ToDos);
+			query.overallCount = true;
+			query.limit = LIMIT;
+			skygear.privateDB.query(query).then((records) => {
+			  console.log(records);
+		      console.log(records.constructor);
+		      var r = Array.from(records);
+		      console.log(Array.isArray(records));
+		      console.log(Array.isArray(r));
+		      console.log(r);
+		      loadRecords(r);
+			}, (error) => {
+			  console.error(error);
+			})
+		}
+		
+		function deleteRecord(recID) {
+			skygear.privateDB.delete({
+			  id: 'ToDos/' + recID
+			}).then((record) => {
+			  console.log(record);
+			}, (error) => {
+			  console.error(error);
+			});
+
+		}
+
+		var logoutBtn = $("#log-out");
+		function logout (username, password) {
+		  skygear.logout().then(() => {
+		    console.log('logout successfully');
+		  }, (error) => {
+		    console.error(error);
+		  });
+		}
+  </script>	
+  </body>
+</html>
