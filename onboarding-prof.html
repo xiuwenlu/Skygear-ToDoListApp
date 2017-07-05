@@ -57,7 +57,7 @@
 		        <input id = "courseName" type="text" placeholder="@Course Name">
 		    </div>
 		    <div class="medium-3 columns">
-		        <input id = "deadline" type="text" placeholder="Deadline">
+		        <input id = "deadline" type="date" placeholder="Deadline">
 		    </div>
 		    <div class="medium-3 columns">
 		    	<button onclick = "newAssignment()"> Ok </button>
@@ -72,7 +72,6 @@
 		<ul id = "task-list"> 
 			<h4> Your Current To-Do List </h4>
 		</ul> -->
-
 		<div class = "row collapse" id = "assignments">
 			<div class="medium-3 columns">
 				<ul class="vertical tabs" data-tabs id="example-tabs"> 
@@ -80,12 +79,19 @@
 				</ul>
 			</div>
 			<div class="medium-9 columns">
-    			<div class="tabs-content" data-tabs-content="example-tabs">
+				<div class = "row" id = "tasks"> 
+					<div class = "medium-4 columns" >
+						<input type = "text" id = "task-input" placeholder="Enter task here..." maxlength="140">
+					</div>
+					<div class = "medium-4 columns">
+						<input type = "date" id = "due-date">
+					</div>
+					<div class = "medium-4 columns">
+						<button onclick = "newElement()" id = "add-task"> Add New Task</button>
+					</div>
+				</div>
+    			<div class="tabs-content" data-tabs-content="example-tabs" id = "task-ul">
     				<ul id = "task-list"> 
-    					<div id = "tasks">
-							<input type = "text" id = "task-input" placeholder="Enter task here..." maxlength="140">
-							<button onclick = "newElement()" id = "add-task"> Add New Task</button>
-						</div>
 						<h4> Your Current To-Do List </h4>
 					</ul>
     			</div>
@@ -104,6 +110,20 @@
 		logoutBtn.on("click", function(e) {
 		  logout(loginName.val(),loginPass.val());
 		})
+		var ul = document.getElementById('example-tabs');  // Parent
+		var currentAssignment = false;
+		var taskList = $("#task-list");
+
+
+		ul.addEventListener('click', function(e) {
+		  if (e.target.tagName === 'LI') {
+		  	 // $('.assignmentClass').each(function (i) {
+		  	 // 	i.style.display = "none";
+		  	 // });
+		    currentAssignment = e.target.id;
+		    getRecords(e.target.id);
+		  }
+		});
 
   </script>	
   </body>

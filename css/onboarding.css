@@ -104,11 +104,9 @@ li:hover {
 	text-align: left;
 }
 #tasks {
-	margin-bottom: 5%;
+	margin: 5%;
 }
-#task-input {
-	margin-left: -10px;
-}
+
 #add-assignment {
 	border: 3px solid white;
 	text-align: left;
@@ -128,9 +126,12 @@ li:hover {
 
 #example-tabs li {
 	margin-right: 0;
-	border: none;
 	box-shadow: none;
+	margin-bottom: 1px;
 
+}
+.dates {
+	float:right;
 }
 
 

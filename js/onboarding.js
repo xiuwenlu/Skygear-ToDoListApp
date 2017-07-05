@@ -67,7 +67,6 @@ function signup (username, password, passwordConf) {
 
   function loadValues() {
     getAssignments();
-    // getRecords();
   }
 
   function newAssignment() {
@@ -90,39 +89,57 @@ function signup (username, password, passwordConf) {
       document.getElementById("assignName").value = "";
       document.getElementById("courseName").value = "";
       document.getElementById("deadline").value = "";
-      addAssignmentRecord(assignName, courseName, deadline);
-      // var recID = getRecordByContent(inputValue);
+      var record = new Assignments({
+        "Assignment" : assignName, "Course" : courseName, "Deadline": deadline
+      });
+      addAssignmentRecord(record);
       var span = document.createElement("SPAN");
       var txt = document.createTextNode("\u00D7");
       span.appendChild(txt);
       span.className = "close-assign";
-      // span.id = recID;
+      li.id = record._id;
+      span.id = record._id;
       li.appendChild(span);
+      var ul = document.createElement("ul");
+      ul.className = "assignmentClass";
+      ul.id = record._id;
+      document.getElementById("task-ul").appendChild(ul);
       deleteTask();
     }
-    
   }
 
   function newElement() {
-  var li = document.createElement("li");
-  var inputValue = document.getElementById("task-input").value;
-  var t = document.createTextNode(inputValue);
-  li.appendChild(t);
-  if (inputValue === '') {
-    alert("Please enter a task first!");
-  } else {
-    document.getElementById("task-list").appendChild(li);
-    document.getElementById("task-input").value = "";
-    addContentRecord(inputValue);
-    var recID = getRecordByContent(inputValue);
-    var span = document.createElement("SPAN");
-    var txt = document.createTextNode("\u00D7");
-    span.appendChild(txt);
-    span.className = "close";
-    span.id = recID;
-    li.appendChild(span);
+    var li = document.createElement("li");
+    var inputValue = document.getElementById("task-input").value;
+    var deadline = document.getElementById("due-date").value;
+    var date = document.createElement("SPAN");
+    var t = document.createTextNode(inputValue);
+    var d = document.createTextNode(deadline);
+    date.appendChild(d);
+    date.className = "dates";
+    li.appendChild(t);
+    li.appendChild(date);
+    if (inputValue === '' || deadline === '') {
+      alert("Please complete all fields first!");
+    } else {
+      // document.getElementById("task-list").appendChild(li);
+      // var ul = $('#' + currentAssignment + ' .assignmentClass');
+      // ul.appendChild(li); 
+      document.getElementById("task-input").value = "";
+      document.getElementById("due-date").value = "";
+      var record = new ToDos({
+         "content" : inputValue, "Deadline" : deadline, "AssignID":currentAssignment
+      })
+      addContentRecord(record);
+      var span = document.createElement("SPAN");
+      var txt = document.createTextNode("\u00D7");
+      span.appendChild(txt);
+      span.className = "close";
+      span.id = record._id;
+      li.id = record._id;
+      li.appendChild(span);
+    }
     deleteTask();
-  }
 }
 
 function deleteTask() {
@@ -136,23 +153,21 @@ function deleteTask() {
     }
   }
 }
-function addContentRecord(content) {
-  skygear.privateDB.save(new ToDos({
-    "content" : content
-  })).then((record) => {
+function addContentRecord(rec) {
+  skygear.privateDB.save(rec).then((record) => {
     console.log(record);
   }, (error) => {
     console.error(error);
   });
 }
 
-function addAssignmentRecord(assignName, courseName, deadline) {
-  skygear.privateDB.save(new Assignments({
-    "Assignment" : assignName, "Course" : courseName, "Deadline": deadline
-  })).then((record) => {
-    console.log(record);
+function addAssignmentRecord(rec) {
+  skygear.privateDB.save(rec).then((record) => {
+    console.log("This is how the record looks: " + record._id);
+    return record._id;
   }, (error) => {
     console.error(error);
+    return false;
   });
 }
 
@@ -161,12 +176,21 @@ function loadTaskRecords(records) {
   for (var i=0; i<records.length; i++) {
     var li = document.createElement("li");
     var inputValue = records[i].content;
+    var deadline = records[i].Deadline;
     var t = document.createTextNode(inputValue);
+    var date = document.createElement("SPAN");
+    date.className = "dates";
+    var d = document.createTextNode(deadline);
     li.appendChild(t);
+    date.appendChild(d);
+    li.appendChild(date);
+     
     document.getElementById("task-list").appendChild(li);
+    // document.getElementsByClassName("tabs-content").getElementsById(currentAssignment).appendChild(li);
+
     var span = document.createElement("SPAN");
-      var txt = document.createTextNode("\u00D7");
-      span.className = "close";
+    var txt = document.createTextNode("\u00D7");
+    span.className = "close";
     span.id = records[i]._id;
     span.appendChild(txt);
     li.appendChild(span);
@@ -187,18 +211,18 @@ function getRecordByContent(content) {
   })
 }
 
-function getRecords() {
-  const query = new skygear.Query(ToDos);
-  query.overallCount = true;
-  query.limit = LIMIT;
+function getRecords(assignmentID) {
+  console.log("The current assignmentID: " + assignmentID);
+  var query = new skygear.Query(ToDos);
+  query.equalTo("AssignID", assignmentID);
   skygear.privateDB.query(query).then((records) => {
-    console.log(records);
-      console.log(records.constructor);
-      var r = Array.from(records);
-      console.log(Array.isArray(records));
-      console.log(Array.isArray(r));
-      console.log(r);
-      loadTaskRecords(r);
+    console.log("Record: " + records);
+    console.log(records.constructor);
+    var r = Array.from(records);
+    console.log(Array.isArray(records));
+    console.log(Array.isArray(r));
+    console.log("Record with this id: " + r);
+    loadTaskRecords(r);
   }, (error) => {
     console.error(error);
   })
@@ -237,6 +261,7 @@ function loadAssignments(records) {
     var span = document.createElement("SPAN");
     var txt = document.createTextNode("\u00D7");
     span.className = "close-assign";
+    li.id = records[i]._id;
     span.id = records[i]._id;
     span.appendChild(txt);
     li.appendChild(span);
@@ -273,6 +298,9 @@ function logout (username, password) {
     console.error(error);
   });
 }
+
+
+
 
 
 // var signupName = $("#username");
