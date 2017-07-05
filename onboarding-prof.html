@@ -2,7 +2,7 @@
   <head>
 	<title>Skygear To-Do List</title>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-	<script type="text/javascript" src="js/onboarding.js"></script>
+	<script src="js/onboarding.js"></script>
 	<link rel="stylesheet" href="css/foundation.css" />
 	<link rel="stylesheet" type="text/css" href="css/onboarding.css">
 	<link rel="shortcut icon" type="image/png" href="css/img/favicon.ico"/>
@@ -12,7 +12,7 @@
 	<meta property="og:site_name" content="Skygear To-Do List"/>
 	<meta property="og:image" content="css/img/icon-todo.png" />
   </head>
-  <body onload = "getRecords()">	
+  <body onload = "loadValues()">	
   	<header>
 		<!--Skygear CDN-->
 		<script src="https://code.skygear.io/js/polyfill/latest/polyfill.min.js"></script>
@@ -41,145 +41,70 @@
 				Skygear To-Do List 
 			</h1>	
 		</div>
-	</div>
-	<div>
-		<a href = "onboarding.html">
-			<button onclick = "logout()" id = "log-out">Log out</button>
-		</a>
-	</div>	
+		<div>
+			<a href = "onboarding.html">
+				<img src ="css/img/icons8-User_50.png">
+				<button onclick = "logout()" id = "log-out">Log out</button>
+			</a>
+		</div>	
 
-	<div id = "task-fields">
+		<div class = "row" id= "add-assignment">
+			<h4> Add Assignment: </h4>
+			<div class="medium-3 columns">
+		        <input id = "assignName" type="text" placeholder="Assignment Name">
+		    </div>
+		    <div class="medium-3 columns">
+		        <input id = "courseName" type="text" placeholder="@Course Name">
+		    </div>
+		    <div class="medium-3 columns">
+		        <input id = "deadline" type="text" placeholder="Deadline">
+		    </div>
+		    <div class="medium-3 columns">
+		    	<button onclick = "newAssignment()"> Ok </button>
+		    </div>
+		</div>
+
+	<!-- <div id = "task-fields">
 		<div id = "tasks">
 			<input type = "text" id = "task-input" placeholder="Enter task here..." maxlength="140">
 			<button onclick = "newElement()" id = "add-task"> Add New Task</button>
 		</div>
 		<ul id = "task-list"> 
 			<h4> Your Current To-Do List </h4>
-		</ul>
+		</ul> -->
+
+		<div class = "row collapse" id = "assignments">
+			<div class="medium-3 columns">
+				<ul class="vertical tabs" data-tabs id="example-tabs"> 
+					<h4> Your Assignments </h4>
+				</ul>
+			</div>
+			<div class="medium-9 columns">
+    			<div class="tabs-content" data-tabs-content="example-tabs">
+    				<ul id = "task-list"> 
+    					<div id = "tasks">
+							<input type = "text" id = "task-input" placeholder="Enter task here..." maxlength="140">
+							<button onclick = "newElement()" id = "add-task"> Add New Task</button>
+						</div>
+						<h4> Your Current To-Do List </h4>
+					</ul>
+    			</div>
+    		</div>
+		</div>
 	</div>
 
 	<script type="text/javascript"> 
 		const LIMIT = 9999;
-		const ToDos = skygear.Record.extend('ToDos')
-
-	  	function newElement() {
-		  var li = document.createElement("li");
-		  var inputValue = document.getElementById("task-input").value;
-		  var t = document.createTextNode(inputValue);
-		  li.appendChild(t);
-		  if (inputValue === '') {
-		    alert("Please enter a task first!");
-		  } else {
-		    document.getElementById("task-list").appendChild(li);
-		  }
-		  document.getElementById("task-input").value = "";
-		  addRecord(inputValue);
-		  var recID = getRecordByContent(inputValue);
-		  var span = document.createElement("SPAN");
-		  var txt = document.createTextNode("\u00D7");
-		  span.appendChild(txt);
-		  span.className = "close";
-		  span.id = recID;
-		  li.appendChild(span);
-		  deleteTask();
-		}
-
-		function deleteTask() {
-			var close = document.getElementsByClassName("close");
-		  	var i;
-		  	for (i = 0; i < close.length; i++) {
-		    	close[i].onclick = function() {
-		      	var div = this.parentElement;
-		      	div.style.display = "none";
-		      	deleteRecord(this.id);
-		    	}
-		  	}
-		}
-		function addRecord(content) {
-		  // var ToDos = skygear.Record.extend('ToDos');
-		  skygear.privateDB.save(new ToDos({
-		  	"content" : content
-		  })).then((record) => {
-		    console.log(record);
-		  }, (error) => {
-		    console.error(error);
-		  });
-		}
-
-		function loadRecords(records) {
-		  for (var i=0; i<records.length; i++) {
-			var li = document.createElement("li");
-			var inputValue = records[i].content;
-			var t = document.createTextNode(inputValue);
-			li.appendChild(t);
-			document.getElementById("task-list").appendChild(li);
-			var span = document.createElement("SPAN");
-		  	var txt = document.createTextNode("\u00D7");
-		  	li.appendChild(span);
-		  }
-
-		  	var myNodelist = document.getElementsByTagName("LI");
-			var i;
-			for (i = 0; i < myNodelist.length; i++) {
-			  var span = document.createElement("SPAN");
-			  var txt = document.createTextNode("\u00D7");
-			  span.className = "close";
-			  span.id = records[i]._id;
-			  span.appendChild(txt);
-			  myNodelist[i].appendChild(span);
-			}
-			deleteTask();
-		}
-
-		function getRecordByContent(content) {
-			const query = new skygear.Query(ToDos);
-			query.equalTo("content", content);
-			query.limit = 1;
-			skygear.privateDB.query(query).then((records) => {
-			  console.log("current record " + records[0]);
-			  const rec = records[0];
-		      return rec._id;
-		    }, (error) => {
-			  console.error(error);
-			})
-		}
-
-		function getRecords() {
-			const query = new skygear.Query(ToDos);
-			query.overallCount = true;
-			query.limit = LIMIT;
-			skygear.privateDB.query(query).then((records) => {
-			  console.log(records);
-		      console.log(records.constructor);
-		      var r = Array.from(records);
-		      console.log(Array.isArray(records));
-		      console.log(Array.isArray(r));
-		      console.log(r);
-		      loadRecords(r);
-			}, (error) => {
-			  console.error(error);
-			})
-		}
-		
-		function deleteRecord(recID) {
-			skygear.privateDB.delete({
-			  id: 'ToDos/' + recID
-			}).then((record) => {
-			  console.log(record);
-			}, (error) => {
-			  console.error(error);
-			});
-
-		}
+		const ToDos = skygear.Record.extend('ToDos');
+		const Assignments = skygear.Record.extend('Assignments');
 
 		var logoutBtn = $("#log-out");
-		function logout (username, password) {
-		  skygear.logout().then(() => {
-		    console.log('logout successfully');
-		  }, (error) => {
-		    console.error(error);
-		  });
-		}
+		var loginName = $("#username");
+		var loginPass= $("#password");
+		logoutBtn.on("click", function(e) {
+		  logout(loginName.val(),loginPass.val());
+		})
+
   </script>	
   </body>
 </html>

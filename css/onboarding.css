@@ -15,7 +15,7 @@ h1, h4, label {
 body {
 	text-align:center;
 	background-color: #6CAEFF;
-	margin-top: 5%;
+	margin-top: 2%;
 
 }
 button {
@@ -43,6 +43,7 @@ ul li {
     position: relative;
     padding: 20px 20px 20px 20px;
     margin: 0 0 3px 0;
+    margin-right: 20px;
     text-align: center;
     font-size: 18px;
     transition: 0.2s;
@@ -60,6 +61,18 @@ li:hover {
 	background: #e6f2ff;
 }
 
+#assignments {
+	margin-top: 5%;
+	border: 3px solid white;
+	margin-bottom: 3%;
+}
+#example-tabs, #assignments {
+	background-color: transparent;
+}
+.tabs-content {
+	background-color: transparent;
+}
+
 .labels {
 	display: block !important;
     vertical-align: center;
@@ -74,21 +87,50 @@ li:hover {
 }
 
 #task-fields {
-	margin-top: 10%;
+	margin-top: 5%;
 	margin-left: 25%;
 	margin-right:25%;
 }
 
 #task-list {
-	margin-top: 10%;
+	margin-top: 5%;
 }
 
-.close {
+.close, .close-assign {
 	float: left;
 	border: none;
 	background: transparent;
 	cursor: pointer;
 	text-align: left;
+}
+#tasks {
+	margin-bottom: 5%;
+}
+#task-input {
+	margin-left: -10px;
+}
+#add-assignment {
+	border: 3px solid white;
+	text-align: left;
+	margin-right: 40%;
+	margin-top: 5%;
+	margin-left: 5px;
+	overflow: hidden;
+}
+#add-assignment button {
+	margin-right: 15px;
+}
+
+#add-assignment h4 {
+	padding-left: 20px;
+	border-bottom: 1px solid white;
+}
+
+#example-tabs li {
+	margin-right: 0;
+	border: none;
+	box-shadow: none;
+
 }
 
 
