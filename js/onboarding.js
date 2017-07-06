@@ -18,140 +18,139 @@ function signup (username, password, passwordConf) {
     }
   }
 
-  function checkSignupInfo(username, password, passwordConfirm) {
-    if (username.length < 1) {
-        alert("Please enter a username.");
-      return false;
-    }
-    if (password.length < 6) {
-      alert("Password is too short. Please enter a password with atleast 6 characters.");
-      return false;
-    }
-    if (password !== passwordConfirm) {
-      alert("Password does not match. Please try again.");
-      return false;
-    }
-    return true;
+function checkSignupInfo(username, password, passwordConfirm) {
+  if (username.length < 1) {
+      alert("Please enter a username.");
+    return false;
   }
-
-
-  function checkLoginInfo(username, password) {
-    if (username.length < 1) {
-        alert("Please enter a username.");
-      return false;
-    }
-    if (password.length < 6) {
-      alert("Password is too short. Please enter a password with atleast 6 characters.");
-      return false;
-    }
-    return true;
-  } 
-
-  function login (username, password) {
-    if (checkLoginInfo(username,password)) {
-      skygear.loginWithUsername(username, password).then((user) => {
-        console.log(user); // user object
-        location.href = "onboarding-prof.html"
-      }, (error) => {
-        console.error(error);    
-        if (error.error.code === skygear.ErrorCodes.InvalidCredentials ||
-            error.error.code === skygear.ErrorCodes.ResourceNotFound ) {
-          // incorrect username or password
-          alert("Incorrect Username or Password.");
-        } else {
-          alert("Error!");
-        }
-      });
-    } 
+  if (password.length < 6) {
+    alert("Password is too short. Please enter a password with atleast 6 characters.");
+    return false;
   }
-
-  function loadValues() {
-    getAssignments();
+  if (password !== passwordConfirm) {
+    alert("Password does not match. Please try again.");
+    return false;
   }
-
-  function newAssignment() {
-    var li = document.createElement("li");
-    var assignName = document.getElementById("assignName").value + " ";
-    var courseName = document.getElementById("courseName").value + " ";
-    var deadline = document.getElementById("deadline").value;
-
-    var a = document.createTextNode(assignName);
-    var c = document.createTextNode(courseName);
-    var d = document.createTextNode(deadline);
-
-    li.appendChild(a);
-    li.appendChild(c);
-    li.appendChild(d);
-    if (assignName === '' || courseName === '' || deadline === '') {
-      alert("Please fill in all sections first!");
-    } else {
-      document.getElementById("example-tabs").appendChild(li);
-      document.getElementById("assignName").value = "";
-      document.getElementById("courseName").value = "";
-      document.getElementById("deadline").value = "";
-      var record = new Assignments({
-        "Assignment" : assignName, "Course" : courseName, "Deadline": deadline
-      });
-      addAssignmentRecord(record);
-      var span = document.createElement("SPAN");
-      var txt = document.createTextNode("\u00D7");
-      span.appendChild(txt);
-      span.className = "close-assign";
-      li.id = record._id;
-      span.id = record._id;
-      li.appendChild(span);
-      var ul = document.createElement("ul");
-      ul.className = "assignmentClass";
-      ul.id = assignName+courseName+deadline;
-      document.getElementById("task-ul").appendChild(ul);
-      deleteTask();
-    }
-  }
-
-  function newElement() {
-    var li = document.createElement("li");
-    var inputValue = document.getElementById("task-input").value;
-    var deadline = document.getElementById("due-date").value;
-    var date = document.createElement("SPAN");
-    var t = document.createTextNode(inputValue);
-    var d = document.createTextNode(deadline);
-    date.appendChild(d);
-    date.className = "dates";
-    li.appendChild(t);
-    li.appendChild(date);
-    if (inputValue === '' || deadline === '') {
-      alert("Please complete all fields first!");
-    } else {
-      document.getElementById("task-list").appendChild(li);
-      // var ul = $('#' + currentAssignment + ' .assignmentClass');
-      // ul.appendChild(li); 
-      document.getElementById("task-input").value = "";
-      document.getElementById("due-date").value = "";
-      var record = new ToDos({
-         "content" : inputValue, "Deadline" : deadline, "AssignID":currentAssignment
-      })
-      addContentRecord(record);
-      var span = document.createElement("SPAN");
-      var txt = document.createTextNode("\u00D7");
-      span.appendChild(txt);
-      span.className = "close";
-      span.id = record._id;
-      li.id = record._id;
-      li.appendChild(span);
-      // console.log("This is the assignmentDetails: " + assignmentDetails);
-      // document.getElementById(assignmentDetails).appendChild(li);
-    }
-    deleteTask();
+  return true;
 }
 
-function deleteTask() {
+
+function checkLoginInfo(username, password) {
+  if (username.length < 1) {
+      alert("Please enter a username.");
+    return false;
+  }
+  if (password.length < 6) {
+    alert("Password is too short. Please enter a password with atleast 6 characters.");
+    return false;
+  }
+  return true;
+} 
+
+function login (username, password) {
+  if (checkLoginInfo(username,password)) {
+    skygear.loginWithUsername(username, password).then((user) => {
+      console.log(user); // user object
+      location.href = "onboarding-prof.html"
+    }, (error) => {
+      console.error(error);    
+      if (error.error.code === skygear.ErrorCodes.InvalidCredentials ||
+          error.error.code === skygear.ErrorCodes.ResourceNotFound ) {
+        // incorrect username or password
+        alert("Incorrect Username or Password.");
+      } else {
+        alert("Error!");
+      }
+    });
+  } 
+}
+
+function loadValues() {
+  getAssignments();
+}
+
+function newAssignment() {
+  var li = document.createElement("li");
+  li.className = "selected";
+  var assignName = document.getElementById("assignName").value + " ";
+  var courseName = document.getElementById("courseName").value + " ";
+  var deadline = document.getElementById("deadline").value;
+  var date = document.createElement("SPAN");
+  date.className = "dates";
+
+  var a = document.createTextNode(assignName);
+  var c = document.createTextNode(courseName);
+  var d = document.createTextNode(deadline);
+
+  li.appendChild(a);
+  li.appendChild(c);
+  date.appendChild(d);
+  li.appendChild(date);
+  li.tagName = courseName;
+
+  if (assignName === '' || courseName === '' || deadline === '') {
+    alert("Please fill in all sections first!");
+  } else {
+    document.getElementById("assignName").value = "";
+    document.getElementById("courseName").value = "";
+    document.getElementById("deadline").value = "";
+    var record = new Assignments({
+      "Assignment" : assignName, "Course" : courseName, "Deadline": deadline
+    });
+    addAssignmentRecord(record);
+    var span = document.createElement("SPAN");
+    var txt = document.createTextNode("\u00D7");
+    span.appendChild(txt);
+    span.className = "close";
+    li.id = record._id;
+    span.id = record._id;
+    li.appendChild(span);
+    document.getElementById("example-tabs").appendChild(li);
+
+  }
+  deleteTask("Assignments/");
+}
+
+function newElement() {
+  var li = document.createElement("li");
+  var inputValue = document.getElementById("task-input").value;
+  var deadline = document.getElementById("due-date").value;
+  var date = document.createElement("SPAN");
+  var t = document.createTextNode(inputValue);
+  var d = document.createTextNode(deadline);
+  date.appendChild(d);
+  date.className = "dates";
+  li.appendChild(t);
+  li.appendChild(date);
+  if (inputValue === '' || deadline === '') {
+    alert("Please complete all fields first!");
+  } else {
+    document.getElementById("task-list").appendChild(li);
+    document.getElementById("task-input").value = "";
+    document.getElementById("due-date").value = "";
+    var record = new ToDos({
+       "content" : inputValue, "Deadline" : deadline, "AssignID":currentAssignment
+    })
+    addContentRecord(record);
+    var span = document.createElement("SPAN");
+    var txt = document.createTextNode("\u00D7");
+    span.appendChild(txt);
+    span.className = "close";
+    span.id = record._id;
+    li.id = record._id;
+    li.appendChild(span);
+  }
+  deleteTask("ToDos/");
+}
+
+function deleteTask(db) {
   var close = document.getElementsByClassName("close");
   var i;
   for (i = 0; i < close.length; i++) {
       close[i].onclick = function() {
       var div = this.parentElement;
       div.style.display = "none";
-      deleteRecord('ToDos', this.id);
+      deleteRecord(db, this.id);
     }
   }
 }
@@ -188,16 +187,15 @@ function loadTaskRecords(records) {
     li.appendChild(date);
      
     document.getElementById("task-list").appendChild(li);
-    // document.getElementsByClassName("tabs-content").getElementsById(currentAssignment).appendChild(li);
-
     var span = document.createElement("SPAN");
     var txt = document.createTextNode("\u00D7");
     span.className = "close";
     span.id = records[i]._id;
+    li.id = records[i]._id;
     span.appendChild(txt);
     li.appendChild(span);
   }
-  deleteTask();
+  deleteTask("ToDos/");
 }
 
 function getRecordByContent(content) {
@@ -309,6 +307,33 @@ function deleteRecord(db, recID) {
   }, (error) => {
     console.error(error);
   });
+
+  if (db === "Assignments/") {
+    var query = new skygear.Query(ToDos);
+    query.equalTo("AssignID", recID);
+    var foundNotes = [];
+    skygear.privateDB.query(query)
+    .then((record) => {
+      console.log(`Found ${record.length} record, going to delete them.`);
+      foundNotes = record;
+      var recsToDelete = [];
+      record.forEach(function(rec) {
+        recsToDelete.push("ToDos/" + rec._id);
+        console.log("The current array object:" + "ToDos/" + rec._id);
+      });
+      // console.log("this is the record being deleted: " + record[0]._id);
+      return skygear.privateDB.delete(recsToDelete); // return a Promise object
+    })
+    .then((errors) => {
+      errors.forEach((perError, idx) => {
+        if (perError) {
+          console.error('Fail to delete', foundNotes[idx]);
+        }
+      });
+    }, (reqError) => {
+      console.error('Request error', reqError);
+    });
+  }
 }
 
 function logout (username, password) {

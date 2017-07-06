@@ -74,8 +74,8 @@
 		</ul> -->
 		<div class = "row collapse" id = "assignments">
 			<div class="medium-4 columns">
+				<h4> Your Assignments </h4>
 				<ul class="vertical tabs" data-tabs id="example-tabs"> 
-					<h4> Your Assignments </h4>
 				</ul>
 			</div>
 			<div class="medium-8 columns">
@@ -93,7 +93,6 @@
     			<div class="tabs-content" data-tabs-content="example-tabs" id = "task-ul">
     				<h4> Your Current To-Do List </h4>
     				<ul id = "task-list"> 
-						
 					</ul>
     			</div>
     		</div>
@@ -111,19 +110,18 @@
 		logoutBtn.on("click", function(e) {
 		  logout(loginName.val(),loginPass.val());
 		})
-		var ul = document.getElementById('example-tabs');  // Parent
+		var ul = document.getElementById('example-tabs');
 		var currentAssignment = false;
-		var assignmentDetails = false;
-		var taskList = $("#task-list");
-
-
+		var selected = "selected";
 		ul.addEventListener('click', function(e) {
 		  if (e.target.tagName === 'LI') {
+		  	e.preventDefault();
 			currentAssignment = e.target.id;
+			$('.selected').removeClass(selected);
+			e.target.className = selected;
 			$('#task-list').html('');
 		    getRecords(e.target.id);
 		  }
-
 		});
 
   </script>	

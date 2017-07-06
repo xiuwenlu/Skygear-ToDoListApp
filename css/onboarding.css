@@ -134,4 +134,9 @@ li:hover {
 	float:right;
 }
 
+.selected {
+	font-weight: bold;
+	color:white;
+	background-color: #0074D9;
+}
 
