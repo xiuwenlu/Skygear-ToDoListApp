@@ -102,7 +102,7 @@ function signup (username, password, passwordConf) {
       li.appendChild(span);
       var ul = document.createElement("ul");
       ul.className = "assignmentClass";
-      ul.id = record._id;
+      ul.id = assignName+courseName+deadline;
       document.getElementById("task-ul").appendChild(ul);
       deleteTask();
     }
@@ -122,7 +122,7 @@ function signup (username, password, passwordConf) {
     if (inputValue === '' || deadline === '') {
       alert("Please complete all fields first!");
     } else {
-      // document.getElementById("task-list").appendChild(li);
+      document.getElementById("task-list").appendChild(li);
       // var ul = $('#' + currentAssignment + ' .assignmentClass');
       // ul.appendChild(li); 
       document.getElementById("task-input").value = "";
@@ -138,6 +138,8 @@ function signup (username, password, passwordConf) {
       span.id = record._id;
       li.id = record._id;
       li.appendChild(span);
+      // console.log("This is the assignmentDetails: " + assignmentDetails);
+      // document.getElementById(assignmentDetails).appendChild(li);
     }
     deleteTask();
 }
@@ -228,6 +230,21 @@ function getRecords(assignmentID) {
   })
 }
 
+function getRecord (db, colName, content) {
+  var query = new skygear.Query(db);
+  query.equalTo(colName, content);
+  skygear.privateDB.query(query).then((records) => {
+    console.log(records);
+    console.log(records.constructor);
+    var r = Array.from(records);
+    console.log(Array.isArray(records));
+    console.log(Array.isArray(r));
+    return r;
+  }, (error) => {
+    console.error(error);
+  })
+}
+
 function getAssignments() {
   const query = new skygear.Query(Assignments);
   query.overallCount = true;
@@ -265,6 +282,9 @@ function loadAssignments(records) {
     span.id = records[i]._id;
     span.appendChild(txt);
     li.appendChild(span);
+    var ul = document.createElement("ul");
+    ul.id = assignName+courseName+deadline;
+    ul.style.display = "none";
   }
   deleteAssignment();
 }
