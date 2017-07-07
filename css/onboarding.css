@@ -61,10 +61,6 @@ li:hover {
 	background: #e6f2ff;
 }
 
-ul li.assignments {
-	margin: 0 0 1% 0;
-}
-
 #assignments {
 	margin-top: 5%;
 	border: 3px solid white;

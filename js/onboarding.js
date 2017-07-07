@@ -77,19 +77,15 @@ function newAssignment() {
   var assignName = document.getElementById("assignName").value;
   var courseName = document.getElementById("courseName").value;
   var deadline = document.getElementById("deadline").value;
-  var date = document.createElement("SPAN");
-  date.className = "dates";
 
   var a = document.createTextNode(assignName+ " ");
-  var c = document.createTextNode(courseName+ " ");
+  var c = document.createTextNode("[" + courseName+ "] ");
   var d = document.createTextNode(deadline);
 
-  li.appendChild(a);
   li.appendChild(c);
-  date.appendChild(d);
-  li.appendChild(date);
+  li.appendChild(a);
+  li.appendChild(d);
   li.tagName = courseName;
-  li.className = "assignments"
 
   if (assignName === '' || courseName === '' || deadline === '') {
     alert("Please fill in all sections first!");
@@ -111,9 +107,7 @@ function newAssignment() {
     document.getElementById("example-tabs").appendChild(li);
     currentAssignment = record._id;
     $('#task-list').html('');
-
-    var timer;
-    timer = setTimeout(function(){ notifyMe(assignName); }, 20000);
+    setTimeout(function(){ notifyMe(assignName); }, 5000);
   }
   deleteAssignment();
 }
@@ -271,15 +265,14 @@ function getAssignments() {
 }
 
 function loadAssignments(records) {
-  // currentAssignment = records[0]._id;
   for (var i=0; i<records.length; i++) {
     var li = document.createElement("li");
-    var assignName = records[i].Assignment;
+    var courseName = records[i].Course;
+    var c = document.createTextNode("[" + courseName+ "] ");
+    li.appendChild(c);
+      var assignName = records[i].Assignment;
     var a = document.createTextNode(assignName + " ");
     li.appendChild(a);
-    var courseName = records[i].Course;
-    var c = document.createTextNode(courseName + " ");
-    li.appendChild(c);
     var deadline = records[i].Deadline;
     var d = document.createTextNode(deadline);
     li.appendChild(d);
@@ -361,7 +354,6 @@ function logout (username, password) {
   });
 }
 
-
 // request permission on page load
 document.addEventListener('DOMContentLoaded', function () {
   if (!Notification) {
@@ -390,24 +382,4 @@ function notifyMe(task) {
     window.open("http://stackoverflow.com/a/13328397/1269037");      
   };
 }
-
-
-// var signupName = $("#username");
-// var signupPass= $("#password");
-// var signupPassConfirm = $("#passwordConf");
-// var loginSubmitBtn = $("#log-in");
-// var signupSubmitBtn = $("#sign-up");
-// var logoutBtn = $("#log-out");
-
-// loginSubmitBtn.on("click", function(e) {
-//   login(loginName.val(),loginPass.val());
-// })
-
-// signupSubmitBtn.on("click", function(e) {
-//   signup(signupName.val(),signupPass.val(),signupPassConfirm.val());
-// })
-
-// logoutButton.on("click", function(e) {
-//   logout();
-// })
 
