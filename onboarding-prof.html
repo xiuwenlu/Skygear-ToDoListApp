@@ -32,67 +32,66 @@
 		</script>
 	</header>
 
-
-	<div class = "row">
+	<div class="row">
 		<div class="large-12 large-centered columns">
 			<h1>
 				<!-- Credit: <a href="https://icons8.com">Icon pack by Icons8</a> -->
-				<img id = "todo-icon" src="css/img/icon-todo-100.png">  
+				<img id="todo-icon" src="css/img/icon-todo-100.png">  
 				Skygear To-Do List 
 			</h1>	
 		</div>
 		<div>
-			<a href = "onboarding.html">
-				<img src ="css/img/icons8-User_50.png">
-				<button onclick = "logout()" id = "log-out">Log out</button>
+			<a href="onboarding.html">
+				<img src="css/img/icons8-User_50.png">
+				<button onclick="logout()" id="log-out">Log out</button>
 			</a>
 		</div>	
 
-		<div class = "row" id= "add-assignment">
+		<div class="row" id="add-assignment">
 			<h4> Add Assignment: </h4>
 			<div class="medium-3 columns">
-		        <input id = "assignName" type="text" placeholder="Assignment Name">
+		        <input id="assignName" type="text" placeholder="Assignment Name" maxlength="20">
 		    </div>
 		    <div class="medium-3 columns">
-		        <input id = "courseName" type="text" placeholder="@Course Name">
+		        <input id="courseName" type="text" placeholder="@Course Name" maxlength="20">
 		    </div>
 		    <div class="medium-3 columns">
-		        <input id = "deadline" type="datetime-local" placeholder="Deadline">
+		        <input id="deadline" type="datetime-local" placeholder="Deadline" maxlength="15">
 		    </div>
 		    <div class="medium-3 columns">
-		    	<button onclick = "newAssignment()"> Ok </button>
+		    	<button onclick="newAssignment()"> Ok </button>
 		    </div>
 		</div>
 
-	<!-- <div id = "task-fields">
-		<div id = "tasks">
-			<input type = "text" id = "task-input" placeholder="Enter task here..." maxlength="140">
-			<button onclick = "newElement()" id = "add-task"> Add New Task</button>
+	<!-- <div id="task-fields">
+		<div id="tasks">
+			<input type = "text" id="task-input" placeholder="Enter task here..." maxlength="140">
+			<button onclick="newElement()" id="add-task"> Add New Task</button>
 		</div>
-		<ul id = "task-list"> 
+		<ul id="task-list"> 
 			<h4> Your Current To-Do List </h4>
 		</ul> -->
-		<div class = "row collapse" id = "assignments">
+		<div class="row collapse" id="assignments">
 			<div class="medium-4 columns">
 				<h4> Your Assignments </h4>
 				<ul class="vertical tabs" data-tabs id="example-tabs"> 
 				</ul>
 			</div>
 			<div class="medium-8 columns">
-				<div class = "row" id = "tasks"> 
-					<div class = "medium-4 columns" >
-						<input type = "text" id = "task-input" placeholder="Enter task here..." maxlength="140">
+				<div class="row" id="tasks"> 
+					<div class="medium-4 columns" >
+						<input type = "text" id="task-input" placeholder="Enter task here..." maxlength="140">
 					</div>
-					<div class = "medium-4 columns">
-						<input type = "datetime-local" id = "due-date">
+					<div class="medium-4 columns">
+						<input type = "datetime-local" id="due-date">
 					</div>
-					<div class = "medium-4 columns">
-						<button onclick = "newElement()" id = "add-task"> Add New Task</button>
+					<div class="medium-4 columns">
+						<button onclick="newElement()" id="add-task"> Add New Task</button>
 					</div>
 				</div>
-    			<div class="tabs-content" data-tabs-content="example-tabs" id = "task-ul">
+    			<div class="tabs-content" data-tabs-content="example-tabs" id="task-ul">
     				<h4> Your Current To-Do List </h4>
-    				<ul id = "task-list"> 
+    				<ul id="task-list"> 
 					</ul>
     			</div>
     		</div>

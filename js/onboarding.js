@@ -1,7 +1,7 @@
 
 function signup (username, password, passwordConf) {
-    if (checkSignupInfo(username, password, passwordConf)) {
-      skygear.signupWithUsername(username, password).then((user) => {
+  if (checkSignupInfo(username, password, passwordConf)) {
+    skygear.signupWithUsername(username, password).then((user) => {
         console.log(user); // user object
         alert("Welcome, signed up successfully!");
         location.href = "onboarding-prof.html"
@@ -12,15 +12,15 @@ function signup (username, password, passwordConf) {
           alert('This user already exists.');
         } else {
             // other kinds of error
-          alert('Error!');
-        }
-      });
-    }
+            alert('Error!');
+          }
+        });
   }
+}
 
 function checkSignupInfo(username, password, passwordConfirm) {
   if (username.length < 1) {
-      alert("Please enter a username.");
+    alert("Please enter a username.");
     return false;
   }
   if (password.length < 6) {
@@ -37,7 +37,7 @@ function checkSignupInfo(username, password, passwordConfirm) {
 
 function checkLoginInfo(username, password) {
   if (username.length < 1) {
-      alert("Please enter a username.");
+    alert("Please enter a username.");
     return false;
   }
   if (password.length < 6) {
@@ -55,13 +55,13 @@ function login (username, password) {
     }, (error) => {
       console.error(error);    
       if (error.error.code === skygear.ErrorCodes.InvalidCredentials ||
-          error.error.code === skygear.ErrorCodes.ResourceNotFound ) {
+        error.error.code === skygear.ErrorCodes.ResourceNotFound ) {
         // incorrect username or password
-        alert("Incorrect Username or Password.");
-      } else {
-        alert("Error!");
-      }
-    });
+      alert("Incorrect Username or Password.");
+    } else {
+      alert("Error!");
+    }
+  });
   } 
 }
 
@@ -71,15 +71,17 @@ function loadValues() {
 
 function newAssignment() {
   var li = document.createElement("li");
+  $('.selected').removeClass(selected);
+
   li.className = "selected";
-  var assignName = document.getElementById("assignName").value + " ";
-  var courseName = document.getElementById("courseName").value + " ";
+  var assignName = document.getElementById("assignName").value;
+  var courseName = document.getElementById("courseName").value;
   var deadline = document.getElementById("deadline").value;
   var date = document.createElement("SPAN");
   date.className = "dates";
 
-  var a = document.createTextNode(assignName);
-  var c = document.createTextNode(courseName);
+  var a = document.createTextNode(assignName+ " ");
+  var c = document.createTextNode(courseName+ " ");
   var d = document.createTextNode(deadline);
 
   li.appendChild(a);
@@ -87,6 +89,7 @@ function newAssignment() {
   date.appendChild(d);
   li.appendChild(date);
   li.tagName = courseName;
+  li.className = "assignments"
 
   if (assignName === '' || courseName === '' || deadline === '') {
     alert("Please fill in all sections first!");
@@ -101,14 +104,18 @@ function newAssignment() {
     var span = document.createElement("SPAN");
     var txt = document.createTextNode("\u00D7");
     span.appendChild(txt);
-    span.className = "close";
+    span.className = "close-assign";
     li.id = record._id;
     span.id = record._id;
     li.appendChild(span);
     document.getElementById("example-tabs").appendChild(li);
+    currentAssignment = record._id;
+    $('#task-list').html('');
 
+    var timer;
+    timer = setTimeout(function(){ notifyMe(assignName); }, 20000);
   }
-  deleteTask("Assignments/");
+  deleteAssignment();
 }
 
 function newElement() {
@@ -122,15 +129,17 @@ function newElement() {
   date.className = "dates";
   li.appendChild(t);
   li.appendChild(date);
-  if (inputValue === '' || deadline === '') {
+  if (currentAssignment === '' || !currentAssignment) {
+    alert("Please select an assignment or create a new assignment first!");
+  } else if (inputValue === '' || deadline === '') {
     alert("Please complete all fields first!");
   } else {
     document.getElementById("task-list").appendChild(li);
     document.getElementById("task-input").value = "";
     document.getElementById("due-date").value = "";
     var record = new ToDos({
-       "content" : inputValue, "Deadline" : deadline, "AssignID":currentAssignment
-    })
+     "content" : inputValue, "Deadline" : deadline, "AssignID":currentAssignment
+   })
     addContentRecord(record);
     var span = document.createElement("SPAN");
     var txt = document.createTextNode("\u00D7");
@@ -140,6 +149,7 @@ function newElement() {
     li.id = record._id;
     li.appendChild(span);
   }
+  deleteAssignment();
   deleteTask("ToDos/");
 }
 
@@ -147,7 +157,7 @@ function deleteTask(db) {
   var close = document.getElementsByClassName("close");
   var i;
   for (i = 0; i < close.length; i++) {
-      close[i].onclick = function() {
+    close[i].onclick = function() {
       var div = this.parentElement;
       div.style.display = "none";
       deleteRecord(db, this.id);
@@ -185,7 +195,7 @@ function loadTaskRecords(records) {
     li.appendChild(t);
     date.appendChild(d);
     li.appendChild(date);
-     
+
     document.getElementById("task-list").appendChild(li);
     var span = document.createElement("SPAN");
     var txt = document.createTextNode("\u00D7");
@@ -205,8 +215,8 @@ function getRecordByContent(content) {
   skygear.privateDB.query(query).then((records) => {
     console.log("current record " + records[0]);
     const rec = records[0];
-      return rec._id;
-    }, (error) => {
+    return rec._id;
+  }, (error) => {
     console.error(error);
   })
 }
@@ -249,25 +259,26 @@ function getAssignments() {
   query.limit = LIMIT;
   skygear.privateDB.query(query).then((records) => {
     console.log(records);
-      console.log(records.constructor);
-      var r = Array.from(records);
-      console.log(Array.isArray(records));
-      console.log(Array.isArray(r));
-      console.log(r);
-      loadAssignments(r);
+    console.log(records.constructor);
+    var r = Array.from(records);
+    console.log(Array.isArray(records));
+    console.log(Array.isArray(r));
+    console.log(r);
+    loadAssignments(r);
   }, (error) => {
     console.error(error);
   })
 }
 
 function loadAssignments(records) {
+  // currentAssignment = records[0]._id;
   for (var i=0; i<records.length; i++) {
     var li = document.createElement("li");
-    var assignName = records[i].Assignment + " ";
-    var a = document.createTextNode(assignName);
+    var assignName = records[i].Assignment;
+    var a = document.createTextNode(assignName + " ");
     li.appendChild(a);
-    var courseName = records[i].Course + " ";
-    var c = document.createTextNode(courseName);
+    var courseName = records[i].Course;
+    var c = document.createTextNode(courseName + " ");
     li.appendChild(c);
     var deadline = records[i].Deadline;
     var d = document.createTextNode(deadline);
@@ -277,6 +288,7 @@ function loadAssignments(records) {
     var txt = document.createTextNode("\u00D7");
     span.className = "close-assign";
     li.id = records[i]._id;
+    li.tagName = courseName;
     span.id = records[i]._id;
     span.appendChild(txt);
     li.appendChild(span);
@@ -289,14 +301,14 @@ function loadAssignments(records) {
 
 function deleteAssignment() {
   var close = document.getElementsByClassName("close-assign");
-    var i;
-    for (i = 0; i < close.length; i++) {
-        close[i].onclick = function() {
-        var div = this.parentElement;
-        div.style.display = "none";
-        deleteRecord('Assignments/', this.id);
-      }
+  var i;
+  for (i = 0; i < close.length; i++) {
+    close[i].onclick = function() {
+      var div = this.parentElement;
+      div.style.display = "none";
+      deleteRecord('Assignments/', this.id);
     }
+  }
 }
 
 function deleteRecord(db, recID) {
@@ -307,29 +319,34 @@ function deleteRecord(db, recID) {
   }, (error) => {
     console.error(error);
   });
-
   if (db === "Assignments/") {
     var query = new skygear.Query(ToDos);
     query.equalTo("AssignID", recID);
     var foundNotes = [];
     skygear.privateDB.query(query)
-    .then((record) => {
-      console.log(`Found ${record.length} record, going to delete them.`);
-      foundNotes = record;
-      var recsToDelete = [];
-      record.forEach(function(rec) {
-        recsToDelete.push("ToDos/" + rec._id);
-        console.log("The current array object:" + "ToDos/" + rec._id);
-      });
-      // console.log("this is the record being deleted: " + record[0]._id);
-      return skygear.privateDB.delete(recsToDelete); // return a Promise object
-    })
+    .then((records) => {
+      if (records.length > 0) {
+        console.log(`Found ${records.length} record, going to delete them.`);
+        foundNotes = records;
+        var recsToDelete = [];
+        records.forEach(function(rec) {
+         recsToDelete.push(rec);
+        });
+        return skygear.privateDB.delete(recsToDelete); // return a Promise object
+      } else {
+          console.log("There weren't any to-dos for this assignment.")
+      }
+      })
     .then((errors) => {
-      errors.forEach((perError, idx) => {
-        if (perError) {
-          console.error('Fail to delete', foundNotes[idx]);
-        }
-      });
+      if(errors) {
+        errors.forEach((perError, idx) => {
+          if (perError) {
+            console.error('Fail to delete', foundNotes[idx]);
+          }
+        });
+      } else {
+        console.log("Delete successfully!")
+      }
     }, (reqError) => {
       console.error('Request error', reqError);
     });
@@ -345,7 +362,34 @@ function logout (username, password) {
 }
 
 
+// request permission on page load
+document.addEventListener('DOMContentLoaded', function () {
+  if (!Notification) {
+    alert('Desktop notifications not available in your browser. Try Chromium.'); 
+    return;
+  }
 
+  if (Notification.permission !== "granted")
+    Notification.requestPermission();
+});
+
+function notifyMe(task) {
+  if (!Notification) {
+    alert('Desktop notifications not available in your browser. Try Chromium.'); 
+    return;
+  }
+
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+  var notification = new Notification('Notification title', {
+    icon: 'css/img/icon-todo-100.png',
+    body: "Your assignment:" + task + "is due!",
+  });
+  notification.onclick = function () {
+    window.open("http://stackoverflow.com/a/13328397/1269037");      
+  };
+}
 
 
 // var signupName = $("#username");
