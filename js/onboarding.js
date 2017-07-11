@@ -67,6 +67,7 @@ function login (username, password) {
 
 function loadValues() {
   getAssignments();
+  loadSublistPushNotifDeadlines();
 }
 
 function newAssignment() {
@@ -107,31 +108,9 @@ function newAssignment() {
     document.getElementById("example-tabs").appendChild(li);
     currentAssignment = record._id;
     $('#task-list').html('');
-    var currentTime = CurrentDateTime();
-    console.log("the current time:" + currentTime);
-    var dueTime = getDeadlineDateTime(deadline);
-    setTimeout(function(){ notifyMe(assignName); }, dueTime - currentTime);
+    setPushNotifByDeadline(deadline, assignName);
   }
   deleteAssignment();
-}
-
-function CurrentDateTime() {
-  var date = new Date();
-  var time = date.getTime();
-  return date+time;
-}
-
-function getDeadlineDateTime(deadline) {
-    var dateVal = deadline.split('T')[0];
-    var timeVal = deadline.split('T')[1];
-    var hrVal = timeVal.split(":")[0];
-    var minVal = timeVal.split(":")[1];
-    var dueTime = new Date(dateVal);
-    console.log("due time: " +  dueTime);
-    dueTime.setHours(hrVal);
-    dueTime.setMinutes(minVal);
-    console.log("due time: " +  dueTime);
-    return dueTime;
 }
 
 function newElement() {
@@ -164,9 +143,27 @@ function newElement() {
     span.id = record._id;
     li.id = record._id;
     li.appendChild(span);
+    setPushNotifByDeadline(deadline, assignName);
   }
   deleteAssignment();
   deleteTask("ToDos/");
+}
+
+function setPushNotifByDeadline(deadline，assignName) {
+    var dateVal = deadline.split('T')[0];
+    var timeVal = deadline.split('T')[1];
+    var hrVal = timeVal.split(":")[0];
+    var minVal = timeVal.split(":")[1];
+    var dueTime = new Date(dateVal);
+    dueTime.setHours(hrVal);
+    dueTime.setMinutes(minVal);
+
+    var currentTime = new Date();
+    console.log("the current time:" + currentTime);
+    console.log("due time: " +  dueTime);
+    var timeDiff = dueTime - currentTime;
+    console.log("time diff: " +  timeDiff);
+    setTimeout(function(){ notifyMe(assignName); }, timeDiff);
 }
 
 function deleteTask(db) {
@@ -222,6 +219,25 @@ function loadTaskRecords(records) {
     li.appendChild(span);
   }
   deleteTask("ToDos/");
+}
+
+function loadSublistPushNotifDeadlines() {
+  const query = new skygear.Query(ToDos);
+  query.overallCount = true;
+  query.limit = LIMIT;
+  skygear.privateDB.query(query).then((records) => {
+    console.log(records);
+    console.log(records.constructor);
+    var r = Array.from(records);
+    console.log(r);
+    for (var i=0; i<r.length; i++) {
+      var assignName = r[i].content;
+      var deadline = r[i].Deadline;
+      setPushNotifByDeadline(deadline, assignName);
+    }
+  }, (error) => {
+    console.error(error);
+  })
 }
 
 function getRecordByContent(content) {
@@ -310,6 +326,8 @@ function loadAssignments(records) {
     var ul = document.createElement("ul");
     ul.id = assignName+courseName+deadline;
     ul.style.display = "none";
+
+    setPushNotifByDeadline(deadline, assignName);
   }
   deleteAssignment();
 }
