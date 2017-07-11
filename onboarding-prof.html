@@ -41,10 +41,8 @@
 			</h1>	
 		</div>
 		<div>
-			<a href="index.html">
-				<img src="css/img/icons8-User_50.png">
-				<button onclick="logout()" id="log-out">Log out</button>
-			</a>
+			<img src="css/img/icons8-User_50.png">
+			<button onclick="logout()" id="log-out">Log out</button>
 		</div>	
 
 		<div class="row" id="add-assignment">
@@ -98,9 +96,9 @@
 		var logoutBtn = $("#log-out");
 		var loginName = $("#username");
 		var loginPass= $("#password");
-		logoutBtn.on("click", function(e) {
-		  logout(loginName.val(),loginPass.val());
-		})
+		// logoutBtn.on("click", function(e) {
+		//   logout();
+		// })
 		var ul = document.getElementById('example-tabs');
 		var currentAssignment = false;
 		var selected = "selected";

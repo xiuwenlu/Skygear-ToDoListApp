@@ -143,7 +143,7 @@ function newElement() {
     span.id = record._id;
     li.id = record._id;
     li.appendChild(span);
-    setPushNotif(deadline, assignName);
+    setPushNotif(deadline, inputValue);
   }
   deleteAssignment();
   deleteTask("ToDos/");
@@ -395,9 +395,10 @@ function deleteRecord(db, recID) {
   }
 }
 
-function logout (username, password) {
+function logout () {
   skygear.logout().then(() => {
     console.log('logout successfully');
+    location.href = "index.html"
   }, (error) => {
     console.error(error);
   });
@@ -428,7 +429,7 @@ function notifyMe(task) {
     body: "Your assignment: " + task + " is due!",
   });
   notification.onclick = function () {
-    window.open("http://stackoverflow.com/a/13328397/1269037");      
+    window.open("https://xiuwenlu.github.io/Skygear-ToDoListApp/onboarding-prof.html");      
   };
 }
 
