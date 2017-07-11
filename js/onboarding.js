@@ -67,7 +67,7 @@ function login (username, password) {
 
 function loadValues() {
   getAssignments();
-  loadSublistPushNotifDeadlines();
+  getAllToDos();
 }
 
 function newAssignment() {
@@ -108,7 +108,7 @@ function newAssignment() {
     document.getElementById("example-tabs").appendChild(li);
     currentAssignment = record._id;
     $('#task-list').html('');
-    setPushNotifByDeadline(deadline, assignName);
+    setPushNotif(deadline, assignName);
   }
   deleteAssignment();
 }
@@ -143,13 +143,13 @@ function newElement() {
     span.id = record._id;
     li.id = record._id;
     li.appendChild(span);
-    setPushNotifByDeadline(deadline, assignName);
+    setPushNotif(deadline, assignName);
   }
   deleteAssignment();
   deleteTask("ToDos/");
 }
 
-function setPushNotifByDeadline(deadline，assignName) {
+function setPushNotif(deadline, assignName) {
     var dateVal = deadline.split('T')[0];
     var timeVal = deadline.split('T')[1];
     var hrVal = timeVal.split(":")[0];
@@ -163,7 +163,9 @@ function setPushNotifByDeadline(deadline，assignName) {
     console.log("due time: " +  dueTime);
     var timeDiff = dueTime - currentTime;
     console.log("time diff: " +  timeDiff);
-    setTimeout(function(){ notifyMe(assignName); }, timeDiff);
+    if (timeDiff > 0) {
+      setTimeout(function(){ notifyMe(assignName); }, timeDiff);
+    }
 }
 
 function deleteTask(db) {
@@ -221,7 +223,16 @@ function loadTaskRecords(records) {
   deleteTask("ToDos/");
 }
 
-function loadSublistPushNotifDeadlines() {
+function loadSublistPushNotifDeadlines(records) {
+  for (var i=0; i<records.length; i++) {
+    var assignName = records[i].content;
+    var deadline = records[i].Deadline;
+    console.log("record: " + records[i] + " assignName: " + assignName + " deadline: " + deadline )
+    setPushNotif(deadline, assignName);
+  }
+}
+
+function getAllToDos() {
   const query = new skygear.Query(ToDos);
   query.overallCount = true;
   query.limit = LIMIT;
@@ -229,12 +240,10 @@ function loadSublistPushNotifDeadlines() {
     console.log(records);
     console.log(records.constructor);
     var r = Array.from(records);
+    console.log(Array.isArray(records));
+    console.log(Array.isArray(r));
     console.log(r);
-    for (var i=0; i<r.length; i++) {
-      var assignName = r[i].content;
-      var deadline = r[i].Deadline;
-      setPushNotifByDeadline(deadline, assignName);
-    }
+    loadSublistPushNotifDeadlines(r);
   }, (error) => {
     console.error(error);
   })
@@ -327,7 +336,7 @@ function loadAssignments(records) {
     ul.id = assignName+courseName+deadline;
     ul.style.display = "none";
 
-    setPushNotifByDeadline(deadline, assignName);
+    setPushNotif(deadline, assignName);
   }
   deleteAssignment();
 }
