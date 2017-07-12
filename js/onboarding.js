@@ -65,6 +65,15 @@ function login (username, password) {
   } 
 }
 
+function logout () {
+  skygear.logout().then(() => {
+    console.log('logout successfully');
+    location.href = "index.html"
+  }, (error) => {
+    console.error(error);
+  });
+}
+
 function loadValues() {
   getAssignments();
   getAllToDos();
@@ -95,7 +104,7 @@ function newAssignment() {
     document.getElementById("courseName").value = "";
     document.getElementById("deadline").value = "";
     var record = new Assignments({
-      "Assignment" : assignName, "Course" : courseName, "Deadline": deadline
+      "Assignment" : assignName, "Course" : courseName, "Deadline": deadline, "Overdue:": false
     });
     addAssignmentRecord(record);
     var span = document.createElement("SPAN");
@@ -108,7 +117,7 @@ function newAssignment() {
     document.getElementById("example-tabs").appendChild(li);
     currentAssignment = record._id;
     $('#task-list').html('');
-    setPushNotif(deadline, assignName);
+    setPushNotif(deadline, assignName, "Assignments", record._id);
   }
   deleteAssignment();
 }
@@ -133,7 +142,7 @@ function newElement() {
     document.getElementById("task-input").value = "";
     document.getElementById("due-date").value = "";
     var record = new ToDos({
-     "content" : inputValue, "Deadline" : deadline, "AssignID":currentAssignment
+     "content" : inputValue, "Deadline" : deadline, "AssignID":currentAssignment, "Overdue": false
    })
     addContentRecord(record);
     var span = document.createElement("SPAN");
@@ -143,13 +152,13 @@ function newElement() {
     span.id = record._id;
     li.id = record._id;
     li.appendChild(span);
-    setPushNotif(deadline, inputValue);
+    setPushNotif(deadline, inputValue, "ToDos", record._id);
   }
   deleteAssignment();
   deleteTask("ToDos/");
 }
 
-function setPushNotif(deadline, assignName) {
+function setPushNotif(deadline, assignName, type, id) {
     var dateVal = deadline.split('T')[0];
     var timeVal = deadline.split('T')[1];
     var hrVal = timeVal.split(":")[0];
@@ -165,6 +174,8 @@ function setPushNotif(deadline, assignName) {
     console.log("time diff: " +  timeDiff);
     if (timeDiff > 0) {
       setTimeout(function(){ notifyMe(assignName); }, timeDiff);
+    } else {
+      updateRecordByID(id, type, "Overdue", true);
     }
 }
 
@@ -228,12 +239,15 @@ function loadSublistPushNotifDeadlines(records) {
     var assignName = records[i].content;
     var deadline = records[i].Deadline;
     console.log("record: " + records[i] + " assignName: " + assignName + " deadline: " + deadline )
-    setPushNotif(deadline, assignName);
+    if (!records[i].Overdue) {
+      setPushNotif(deadline, assignName, "ToDos", records[i]._id);
+    }
   }
 }
 
 function getAllToDos() {
   const query = new skygear.Query(ToDos);
+  query.equalTo("Overdue", false);
   query.overallCount = true;
   query.limit = LIMIT;
   skygear.privateDB.query(query).then((records) => {
@@ -249,17 +263,22 @@ function getAllToDos() {
   })
 }
 
-function getRecordByContent(content) {
-  const query = new skygear.Query(ToDos);
-  query.equalTo("content", content);
-  query.limit = 1;
+function updateRecordByID(id, type, coln, updateDetails) {
+  var query = new skygear.Query(ToDos);
+  if (type === "Assignments") {
+    var query = new skygear.Query(Assignments);
+  } 
+  query.equalTo("_id", id);
   skygear.privateDB.query(query).then((records) => {
-    console.log("current record " + records[0]);
-    const rec = records[0];
-    return rec._id;
-  }, (error) => {
-    console.error(error);
-  })
+      var rec = records[0];
+      console.log("the record returned by query: " + rec );
+      rec[coln] = updateDetails;
+      return skygear.privateDB.save(rec);
+    }).then((records) => {
+      console.log('update success');
+    }, (error) => {
+      console.error(error);
+    });
 }
 
 function getRecords(assignmentID) {
@@ -335,8 +354,9 @@ function loadAssignments(records) {
     var ul = document.createElement("ul");
     ul.id = assignName+courseName+deadline;
     ul.style.display = "none";
-
-    setPushNotif(deadline, assignName);
+    if (!records[i].Overdue) {
+      setPushNotif(deadline, assignName, "Assignments", records[i]._id);
+    }
   }
   deleteAssignment();
 }
@@ -393,15 +413,6 @@ function deleteRecord(db, recID) {
       console.error('Request error', reqError);
     });
   }
-}
-
-function logout () {
-  skygear.logout().then(() => {
-    console.log('logout successfully');
-    location.href = "index.html"
-  }, (error) => {
-    console.error(error);
-  });
 }
 
 // request permission on page load
