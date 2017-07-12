@@ -66,12 +66,13 @@ function login (username, password) {
 }
 
 function getUserName() {
-    skygear.whoami().then((user) => {
-      var user = `${user.username}`;
-      var span = document.createElement("SPAN");
-      span.appendChild(document.createTextNode(user));
-      span.id = "user";
-      document.getElementById("user-prof").appendChild(span);
+  skygear.whoami().then((user) => {
+    var user = `${user.username}`;
+    console.log("the current user is:" + user);
+    var span = document.createElement("SPAN");
+    span.appendChild(document.createTextNode(user));
+    span.id = "user";
+    document.getElementById("user-prof").appendChild(span);
   }, (err) => {
       console.log("Error");
   })
