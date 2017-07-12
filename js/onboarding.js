@@ -66,6 +66,8 @@ function login (username, password) {
 }
 
 function getUserName() {
+  console.log("GETTING THE USER");
+
   skygear.whoami().then((user) => {
     var user = `${user.username}`;
     console.log("the current user is:" + user);
