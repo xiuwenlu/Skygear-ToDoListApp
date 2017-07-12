@@ -88,6 +88,7 @@ li:hover {
 
 #task-fields {
 	margin-top: 5%;
+	/*padding-left: 10px;*/
 	margin-left: 25%;
 	margin-right:25%;
 }
@@ -105,6 +106,7 @@ li:hover {
 }
 #tasks {
 	margin: 5%;
+	margin-left: 10%;
 }
 
 #add-assignment {
@@ -112,7 +114,7 @@ li:hover {
 	text-align: left;
 	margin-right: 20%;
 	margin-top: 5%;
-	margin-left: 5px;
+	margin-left: .5px;
 	overflow: hidden;
 }
 #add-assignment button {
@@ -127,7 +129,8 @@ li:hover {
 #example-tabs li {
 	margin-right: 0;
 	box-shadow: none;
-	margin-bottom: 1px;
+	margin-bottom: 0;
+	padding-bottom: 25px;
 
 }
 .dates {
@@ -139,4 +142,12 @@ li:hover {
 	color:white;
 	background-color: #0074D9;
 }
+#user {
+	font-weight: bold;
+	text-transform: uppercase;
+	color: white;
+}
 
+#subtask-container {
+	border-left: 2px white solid;
+}

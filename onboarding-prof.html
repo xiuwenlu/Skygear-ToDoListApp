@@ -41,9 +41,11 @@
 			</h1>	
 		</div>
 		<div>
-			<img src="css/img/icons8-User_50.png">
+			<div id = "user-prof">
+				<img src="css/img/icons8-User_50.png">
+			</div>
 			<button onclick="logout()" id="log-out">Log out</button>
-		</div>	
+		</div>
 
 		<div class="row" id="add-assignment">
 			<h4> Add Assignment: </h4>
@@ -67,7 +69,7 @@
 				<ul class="vertical tabs" data-tabs id="example-tabs"> 
 				</ul>
 			</div>
-			<div class="medium-8 columns">
+			<div class="medium-8 columns" id = "subtask-container">
 				<div class="row" id="tasks"> 
 					<div class="medium-4 columns" >
 						<input type = "text" id="task-input" placeholder="Enter task here..." maxlength="140">
