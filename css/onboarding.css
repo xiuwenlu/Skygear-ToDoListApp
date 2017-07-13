@@ -41,7 +41,8 @@ ul {
 ul li {
     background-color: white;
     position: relative;
-    padding: 20px 20px 20px 20px;
+    /*padding: 20px 20px 20px 20px;*/
+    padding: 5.5%;
     margin: 0 0 3px 0;
     margin-right: 20px;
     text-align: center;
@@ -150,4 +151,12 @@ li:hover {
 
 #subtask-container {
 	border-left: 2px white solid;
+}
+
+#due-date, #deadline {
+	color: #7A7A7A;
+}
+
+#example-tabs li {
+	padding: 7.5%;
 }

@@ -21,6 +21,7 @@
 		<!--Skygear configuration-->
 		<!--The app end point and the api key can be found in the developer portal-->
 		<script>
+			/*jshint esversion: 6 */
 		  skygear.config({
 		    'endPoint': 'https://onboarding.skygeario.com/', // trailing slash is required
 		    'apiKey': '7db0c25041ab4154b82233f3e308b2ba',
@@ -98,9 +99,6 @@
 		var logoutBtn = $("#log-out");
 		var loginName = $("#username");
 		var loginPass= $("#password");
-		// logoutBtn.on("click", function(e) {
-		//   logout();
-		// })
 		var ul = document.getElementById('example-tabs');
 		var currentAssignment = false;
 		var selected = "selected";
