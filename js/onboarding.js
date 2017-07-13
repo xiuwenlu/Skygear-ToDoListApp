@@ -185,9 +185,9 @@ function setPushNotif(deadline, assignName, type, id, isnew) {
     console.log("due time: " +  dueTime);
     var timeDiff = dueTime - currentTime;
     console.log("time diff: " +  timeDiff);
-    if (timeDiff > 0 || isnew) {
+    if (timeDiff > 0) {
       setTimeout(function(){ notifyMe(assignName); }, timeDiff);
-    } else {
+    } else if (timeDiff < 0 && !isnew) {
       updateRecordByID(id, type, "Overdue", true);
     }
 }
